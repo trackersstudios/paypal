@@ -6,46 +6,37 @@
 		<p><?= form_dropdown('enabled', config_item('enable_disable'), $settings['paypal']['enabled']) ?></p>
 		<p><a href="<?= base_url() ?>api/<?= $this_module ?>/uninstall" id="app_uninstall" class="button_delete">Uninstall</a></p>
 	</div>
-	
-	<h3>Permissions</h3>
 
-	<p>Create
-	<?= form_dropdown('create_permission', config_item('users_levels'), $settings['paypal']['create_permission']) ?>
-	</p>
 
-	<p>Publish
-	<?= form_dropdown('publish_permission', config_item('users_levels'), $settings['paypal']['publish_permission']) ?>	
-	</p>
-
-	<p>Manage All
-	<?= form_dropdown('manage_permission', config_item('users_levels'), $settings['paypal']['manage_permission']) ?>	
-	</p>
-	
-	<span class="item_separator"></span>
-
-  <div class="content_wrap_inner">
-	
     <h3>Account Info</h3>
+
     <p>Sandboxed
-    <?= form_dropdown('sandbox',array('true' => 'TRUE', 'false' => 'FALSE'),'true') ?>
+    	<?= form_dropdown('sandbox', config_item('yes_or_no'), $settings['paypal']['sandbox']) ?>
     </p>
+
     <p>Username
-    <input type="text" name="username" value="<?= $settings['paypal']['username'] ?>">
+    	<input type="text" name="username" value="<?= $settings['paypal']['username'] ?>">
     </p>
+
     <p>Password
-    <input type="text" name="password" value="<?= $settings['paypal']['password'] ?>">
+    	<input type="text" name="password" value="<?= $settings['paypal']['password'] ?>">
     </p>
-    <p>Api Signature
-    <input type="text" name="signature" value="<?= $settings['paypal']['signature'] ?>">
-    </p>
-
     
-	</div>
+    <p>API Signature
+    	<input type="text" name="signature" value="<?= $settings['paypal']['signature'] ?>">
+    </p>
 
+    <p>Application ID
+    	<input type="text" name="application_id" value="<?= $settings['paypal']['application_id'] ?>">
+    </p>
+
+    <p>Developer Email
+    	<input type="text" name="account_email" value="<?= $settings['paypal']['account_email'] ?>">
+    </p>
+    
 
 	<input type="hidden" name="module" value="<?= $this_module ?>">
 	<p><input type="submit" name="save" value="Save" /></p>
-	
 	
 
 </div>

@@ -13,31 +13,22 @@ class Home extends Dashboard_Controller
     function __construct()
     {
         parent::__construct();
+		
+        if (config_item('paypal_sandbox') == 'TRUE') $sandbox = TRUE;
+        else $sandbox = FALSE;
 
-		$this->load->config('paypal');
-		
-		$this->data['page_title'] = 'Paypal';
-		/*
-		$config['Sandbox'] = TRUE;
-		$config['APIVersion'] = '85.0';
-		$config['APIUsername'] = $config['Sandbox'] ? 'tjgill_1342254503_biz_api1.gmail.com' : 'PRODUCTION_USERNAME_GOES_HERE';
-		$config['APIPassword'] = $config['Sandbox'] ? '1342254527' : 'PRODUCTION_PASSWORD_GOES_HERE';
-		$config['APISignature'] = $config['Sandbox'] ? 'An5ns1Kso7MWUdW4ErQKJJJ4qi4-A2.oNj-q1ACiwa2FlftkxYynZWAS' : 'PRODUCTION_SIGNATURE_GOES_HERE';
-		$config['DeviceID'] = $config['Sandbox'] ? '' : 'PRODUCTION_DEVICE_ID_GOES_HERE';
-		$config['ApplicationID'] = $config['Sandbox'] ? '' : 'PRODUCTION_APP_ID_GOES_HERE';
-		$config['DeveloperEmailAccount'] = $config['Sandbox'] ? '' : 'PRODUCTION_DEV_EMAIL_GOES_HERE';
-		*/
-		
 		$config = array( 
-			'Sandbox'			=> TRUE,
-			'APIVersion'		=> '85.0',
-			'ApplicationID'		=> 'APP-80W284485P519543T',
-			'APIUsername'		=> config_item('paypal_username'),
-			'APIPassword'		=> config_item('paypal_password'),
-			'APISignature'		=> config_item('paypal_signature')
-		);		
-		
-		$this->load->library('paypal_adaptive', $config);
+			'Sandbox'				=> $sandbox,
+			'APIVersion'			=> '85.0',
+			'APIUsername'			=> config_item('paypal_username'),		// PRODUCTION_USERNAME_GOES_HERE
+			'APIPassword'			=> config_item('paypal_password'),		// PRODUCTION_PASSWORD_GOES_HERE
+			'APISignature'			=> config_item('paypal_signature'),		// PRODUCTION_SIGNATURE_GOES_HERE
+			'ApplicationID'			=> config_item('paypal_application_id'),// PRODUCTION_APP_ID_GOES_HERE
+			'DeveloperEmailAccount'	=> config_item('paypal_account_email')	// PRODUCTION_DEV_EMAIL_GOES_HERE
+		);
+
+		$this->load->library('paypal_adaptive', $config);               
+		$this->load->library('paypal_pro', $config);
 	}
 	
 	function make_payment()
@@ -219,5 +210,23 @@ class Home extends Dashboard_Controller
     	$this->render();
 	}
 
+	function get_balance()
+	{        
+	    $GBFields = array('returnallcurrencies' => '1');
+	    $PayPalRequestData = array('GBFields'=>$GBFields);
+	    $PayPalResult = $this->paypal_pro->GetBalance($PayPalRequestData);
+	    
+	    if(!$this->paypal_pro->APICallSuccessful($PayPalResult['ACK']))
+	    {
+	        $errors = array('Errors' => $PayPalResult['ERRORS']);
+	        $this->load->view('../modules/paypal/views/paypal/paypal_error', $errors);
+	    }
+	    else
+	    {
+	        // Successful call.  Load view or whatever you need to do here.
+	        $this->data['balance'] = $PayPalResult;
+	        $this->render();
+	    }
+	}
 	
 }
